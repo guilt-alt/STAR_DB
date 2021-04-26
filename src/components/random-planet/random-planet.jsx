@@ -2,17 +2,11 @@ import React, { Component } from 'react';
 
 import './random-planet.css';
 
+import Api from '../../api';
 import Loader from '../loader';
 import ErrorIndicator from '../error-indicator';
-import Api from '../../api';
 
 export default class RandomPlanet extends Component {
-
-  constructor() {
-    super();
-
-    this.updatePlanet();
-  }
 
   state = {
     planet: {},
@@ -21,6 +15,15 @@ export default class RandomPlanet extends Component {
   };
 
   api = new Api();
+
+  componentDidMount() {
+    this.updatePlanet();
+    this.interval = setInterval(this.updatePlanet, 10000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
 
   onPlanetLoaded = (planet) => {
     this.setState({
@@ -36,7 +39,7 @@ export default class RandomPlanet extends Component {
     })
   };
 
-  updatePlanet() {
+  updatePlanet = () => {
     const id = Math.floor(Math.random() * 19) + 2;
 
     this.api
