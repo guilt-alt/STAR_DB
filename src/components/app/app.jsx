@@ -1,33 +1,24 @@
 import React, { Component } from 'react';
 
+import './app.css';
+
+import Api from '../../api';
+
 import Header from '../header';
 import RandomPlanet from '../random-planet';
 
 import ErrorIndicator from '../error-indicator';
-import ErrorButton from '../error-button';
 
-import './app.css';
-import PeoplePage from '../people-page/people-page';
+import { PeoplePage } from '../pages';
+
+import { ApiProvider } from '../api-context';
 
 export default class App extends Component {
 
+  api = new Api();
+
   state = {
-    showRandomPlanet: true,
     hasError: false,
-  };
-
-  componentDidCatch() {
-    this.setState({
-      hasError: true
-    })
-  }
-
-  toggleRandomPlanet = () => {
-    this.setState((state) => {
-      return {
-        showRandomPlanet: !state.showRandomPlanet
-      }
-    });
   };
 
   componentDidCatch() {
@@ -40,27 +31,17 @@ export default class App extends Component {
       return <ErrorIndicator />
     }
 
-    const planet = this.state.showRandomPlanet ? <RandomPlanet /> : null;
-
     return (
-      <div className="stardb-app">
-        <Header />
-        {planet}
+      <ApiProvider value={this.api}>
+        <div className="stardb-app">
+          <Header />
 
-        <div className="row mb2 button-row">
-          <button
-            className="toggle-planet btn btn-warning btn-lg"
-            onClick={this.toggleRandomPlanet}>
-            Toggle Random Planet
-          </button>
-          <ErrorButton />
+          <RandomPlanet />
+
+          <PeoplePage />
+
         </div>
-
-        <PeoplePage />
-        <PeoplePage />
-        <PeoplePage />
-
-      </div>
+      </ApiProvider>
     );
   }
 }

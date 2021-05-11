@@ -1,51 +1,37 @@
-import { Component } from 'react';
-
 import './item-list.css';
 
-import Api from '../../api';
-import Loader from '../loader';
+import PropTypes from 'prop-types';
 
-export default class ItemList extends Component {
+const ItemList = (props) => {
 
-  api = new Api();
+  const { data, onItemSelected, children: renderLabel } = props;
 
-  state = {
-    peopleList: null,
-  }
+  const items = data.map((item) => {
 
-  componentDidMount() {
-    this.api
-      .getPeoples()
-      .then((peopleList) => {
-        this.setState({
-          peopleList
-        })
-      })
-  }
-
-  renderItems(arr) {
-    return arr.map(({id, name}) => {
-      return (
-        <li className="list-group-item"
-          key={id}
-          onClick={() => this.props.onItemSelected(id)}
-        >
-          {name}
-        </li>
-      );
-    });
-  }
-
-  render() {
-
-    const { peopleList } = this.state;
-
-    const content = !peopleList ? <Loader /> : this.renderItems(peopleList);
+    const { id } = item;
+    const value = renderLabel(item);
 
     return (
-      <ul className="item-list list-group">
-        {content}
-      </ul>
+      <li className="list-group-item"
+        key={id}
+        onClick={() => onItemSelected(id)}
+      >
+        {value}
+      </li>
     );
-  }
+  });
+
+  return (
+    <ul className="item-list list-group">
+      {items}
+    </ul>
+  );
 }
+
+ItemList.propTypes = {
+  onItemSelected: PropTypes.func.isRequired,
+  data: PropTypes.arrayOf(PropTypes.object).isRequired,
+  children: PropTypes.func.isRequired,
+}
+
+export default ItemList;

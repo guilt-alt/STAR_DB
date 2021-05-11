@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 import './random-planet.css';
 
@@ -7,6 +8,14 @@ import Loader from '../loader';
 import ErrorIndicator from '../error-indicator';
 
 export default class RandomPlanet extends Component {
+
+  static defaultProps = {
+    updateInterval: 10000,
+  }
+
+  static propTypes = {
+    updateInterval: PropTypes.number
+  }
 
   state = {
     planet: {},
@@ -17,8 +26,11 @@ export default class RandomPlanet extends Component {
   api = new Api();
 
   componentDidMount() {
+
+    const { updateInterval } = this.props;
+
     this.updatePlanet();
-    this.interval = setInterval(this.updatePlanet, 10000);
+    this.interval = setInterval(this.updatePlanet, updateInterval);
   }
 
   componentWillUnmount() {
@@ -53,7 +65,7 @@ export default class RandomPlanet extends Component {
     const { planet, loading, error } = this.state;
 
     const loader = loading ? <Loader /> : null;
-    const errorMessage = error ? <ErrorIndicator/> : null;
+    const errorMessage = error ? <ErrorIndicator /> : null;
     const content = !(loading || error) ? <PlanetView planet={planet} /> : null;
 
     return (
